@@ -7,8 +7,7 @@ namespace Guichet
         static void Main(string[] args)
         {
             Guichet guichet = new Guichet();
-            Administrateur admin = new Administrateur();
-            admin.menuAdmin();
+            
         }
     }
 }
