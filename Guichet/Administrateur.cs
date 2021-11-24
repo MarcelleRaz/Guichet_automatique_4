@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Guichet
 {
-    class Administrateur
+    class Administrateur:Guichet
     {
         private string nom;
         private string nip;
@@ -59,7 +59,7 @@ namespace Guichet
             }
             if (response.Equals("N"))
             {
-                //appel fonction panne du guichet
+                modepanne(true);
             }
             while (!response.Equals("O") && !response.Equals("N")) 
             {
@@ -81,13 +81,13 @@ namespace Guichet
         }
         public void soldeGuichet()
         {
-            double soldeGuichet;
-            soldeGuichet = 10000d;
-            //soldeGuichet=soldeGuichet+depotGuichet()
+            double soldeGuichet = Soldeguichet;
+            soldeGuichet += depotGuichet();
+            Console.WriteLine("Le solde du guichet est de: {0}",soldeGuichet);
         }
         public void retourMenuppl()
         {
-            //appel menu ppl
+            menuprincipale();
         }
     }
 }
