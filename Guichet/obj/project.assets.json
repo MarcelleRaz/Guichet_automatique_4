@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\exo_BackEnd\\Projet Guichet\\Guichet\\Guichet\\Guichet.csproj",
+      "projectUniqueName": "F:\\exo_BackEnd\\Projet Guichet\\Guichet_automatique_4-develop\\Guichet\\Guichet.csproj",
       "projectName": "Guichet",
-      "projectPath": "F:\\exo_BackEnd\\Projet Guichet\\Guichet\\Guichet\\Guichet.csproj",
+      "projectPath": "F:\\exo_BackEnd\\Projet Guichet\\Guichet_automatique_4-develop\\Guichet\\Guichet.csproj",
       "packagesPath": "C:\\Users\\Paix\\.nuget\\packages\\",
-      "outputPath": "F:\\exo_BackEnd\\Projet Guichet\\Guichet\\Guichet\\obj\\",
+      "outputPath": "F:\\exo_BackEnd\\Projet Guichet\\Guichet_automatique_4-develop\\Guichet\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Paix\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -39,3 +39,17 @@ F:\exo_BackEnd\Projet Guichet\ProjetGuichet-main\Guichet\obj\Debug\netcoreapp3.1
 F:\exo_BackEnd\Projet Guichet\ProjetGuichet-main\Guichet\obj\Debug\netcoreapp3.1\Guichet.dll
 F:\exo_BackEnd\Projet Guichet\ProjetGuichet-main\Guichet\obj\Debug\netcoreapp3.1\Guichet.pdb
 F:\exo_BackEnd\Projet Guichet\ProjetGuichet-main\Guichet\obj\Debug\netcoreapp3.1\Guichet.genruntimeconfig.cache
+F:\exo_BackEnd\Projet Guichet\Guichet_automatique_4-develop\Guichet\bin\Debug\netcoreapp3.1\Guichet.exe
+F:\exo_BackEnd\Projet Guichet\Guichet_automatique_4-develop\Guichet\bin\Debug\netcoreapp3.1\Guichet.deps.json
+F:\exo_BackEnd\Projet Guichet\Guichet_automatique_4-develop\Guichet\bin\Debug\netcoreapp3.1\Guichet.runtimeconfig.json
+F:\exo_BackEnd\Projet Guichet\Guichet_automatique_4-develop\Guichet\bin\Debug\netcoreapp3.1\Guichet.runtimeconfig.dev.json
+F:\exo_BackEnd\Projet Guichet\Guichet_automatique_4-develop\Guichet\bin\Debug\netcoreapp3.1\Guichet.dll
+F:\exo_BackEnd\Projet Guichet\Guichet_automatique_4-develop\Guichet\bin\Debug\netcoreapp3.1\Guichet.pdb
+F:\exo_BackEnd\Projet Guichet\Guichet_automatique_4-develop\Guichet\obj\Debug\netcoreapp3.1\Guichet.csproj.AssemblyReference.cache
+F:\exo_BackEnd\Projet Guichet\Guichet_automatique_4-develop\Guichet\obj\Debug\netcoreapp3.1\Guichet.GeneratedMSBuildEditorConfig.editorconfig
+F:\exo_BackEnd\Projet Guichet\Guichet_automatique_4-develop\Guichet\obj\Debug\netcoreapp3.1\Guichet.AssemblyInfoInputs.cache
+F:\exo_BackEnd\Projet Guichet\Guichet_automatique_4-develop\Guichet\obj\Debug\netcoreapp3.1\Guichet.AssemblyInfo.cs
+F:\exo_BackEnd\Projet Guichet\Guichet_automatique_4-develop\Guichet\obj\Debug\netcoreapp3.1\Guichet.csproj.CoreCompileInputs.cache
+F:\exo_BackEnd\Projet Guichet\Guichet_automatique_4-develop\Guichet\obj\Debug\netcoreapp3.1\Guichet.dll
+F:\exo_BackEnd\Projet Guichet\Guichet_automatique_4-develop\Guichet\obj\Debug\netcoreapp3.1\Guichet.pdb
+F:\exo_BackEnd\Projet Guichet\Guichet_automatique_4-develop\Guichet\obj\Debug\netcoreapp3.1\Guichet.genruntimeconfig.cache
