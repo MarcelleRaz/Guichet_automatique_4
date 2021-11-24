@@ -48,10 +48,12 @@ namespace Guichet
             Console.WriteLine("1- Se connecter à vore compte");
             Console.WriteLine("2- Se connecter comme adimnistrateur");
             Console.WriteLine("3- Quitter");
-            string input=Console.ReadLine();
+        }
+        
+        public void choisimenu()
+        {
 
         }
-       
     }    
 
     
