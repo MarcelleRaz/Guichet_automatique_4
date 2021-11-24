@@ -12,8 +12,8 @@ namespace Guichet
         {
 
         }
-        protected string NomAdmin { get => nom; set => nom = value; }
-        protected string NipAdmin { get => nip; set => nip = value; }
+        public string NomAdmin { get => nom; set => nom = value; }
+        public string NipAdmin { get => nip; set => nip = value; }
 
         public void menuAdmin()
         {
@@ -23,7 +23,7 @@ namespace Guichet
             Console.WriteLine("3- Voir le solde du guichet");
             Console.WriteLine("4- Retourner au menu principal");
             Console.WriteLine("******************************************************************************************************");
-            Console.WriteLine("Veuillez choisir votre action parmi les numéros ci-dessus.\n");
+            Console.WriteLine("Veuillez choisir votre action parmi les numéros ci-dessus:\n");
             choiceAdmin();
         }
         public void choiceAdmin()
@@ -88,6 +88,38 @@ namespace Guichet
         public void retourMenuppl()
         {
             menuprincipale();
+        }
+        public void accesComptAdmin()
+        {
+            Console.WriteLine("******************************************************************************************************");
+            Console.WriteLine("Bienvenue sur le compte Administrateur");
+            Console.WriteLine("Veuillez saisir vos informations:");
+            Console.WriteLine("Nom d'utilisateur:\n");
+            NomAdmin=Console.ReadLine();
+            Console.WriteLine("Mot de passe:\n");
+            NipAdmin=Console.ReadLine();
+            verificationAcces();
+        }
+        public override void verificationAcces()
+        {
+            int i = 1;
+            while(i<3)
+            {
+                if (NomAdmin.Equals("admin") && NipAdmin.Equals("123456"))
+                {
+                    menuAdmin();
+                }
+                
+                if(!NomAdmin.Equals("admin") || !NipAdmin.Equals("123456"))
+                {
+                    Console.WriteLine("La combinaison 'Nom d'utilisateur et NIP' n'est pas reconnue.\nVeuillez saisir votre nom d'utilisateur et nip.");
+                    Console.WriteLine("Nom d'utilisateur:\n");
+                    NomAdmin = Console.ReadLine();
+                    Console.WriteLine("Mot de passe:\n");
+                    NipAdmin = Console.ReadLine();
+                }
+                i = i + 1;
+            }
         }
     }
 }

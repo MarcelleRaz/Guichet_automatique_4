@@ -8,7 +8,17 @@ namespace Guichet
         {
             Guichet guichet = new Guichet();
             Administrateur admin = new Administrateur();
-            admin.depotGuichet();
+            admin.accesComptAdmin();
+        }
+        public void accesComptClient()
+        {
+            Console.WriteLine("******************************************************************************************************");
+            Console.WriteLine("Bienvenue sur notre Guichet Automatique");
+            Console.WriteLine("Veuillez saisir vos informations:");
+            Console.WriteLine("Nom d'utilisateur:\n");
+            Console.ReadLine();
+            Console.WriteLine("Mot de passe:\n");
+            Console.ReadLine();
         }
     }
 }
