@@ -1,36 +1,35 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Guichet
 {
+
     public class Guichet
     {
-        private double soldeguichet;
+        private double soldeguichet=10000d;
         private bool panne;
-        private ArrayList listCompte;
-        //Administrateur admin = new Administrateur();
-        CompteCheque ch1 = new CompteCheque("ch0001");
-        CompteCheque ch2 = new CompteCheque("ch0002");
-        CompteCheque ch3= new CompteCheque("ch0003");
-        CompteCheque ch4= new CompteCheque("ch0004");
-        CompteCheque ch5= new CompteCheque("ch0005");
-        CompteEpargne ep1 = new CompteEpargne("ep0001");
-        CompteEpargne ep2 = new CompteEpargne("ep0002");
-        CompteEpargne ep3 = new CompteEpargne("ep0003");
-        CompteEpargne ep4= new CompteEpargne("ep0004");
-        CompteEpargne ep5 = new CompteEpargne("ep0005");
+        private List<CompteClient> listcompte;
+        private CompteClient clientActuel;
+        private CompteAdmin compteAdmin;
         public Guichet()
         {
-            this.soldeguichet = 10000d;
-            //this.listCompte = ListCompte;
-           listCompte = new ArrayList();
+            this.Soldeguichet = Soldeguichet;
+        }
+
+        internal Guichet(List<CompteClient> listcompte, CompteAdmin compteAdmin)
+        {
+            this.Listcompte = listcompte;
+            this.CompteAdmin = compteAdmin;
         }
 
         public double Soldeguichet { get => soldeguichet; set => soldeguichet = value; }
         public bool Panne { get => panne; set => panne = value; }
-        //public ArrayList ListCompte { get => listCompte; set => listCompte = value; }
+        internal List<CompteClient> Listcompte { get => listcompte; set => listcompte = value; }
+        internal CompteClient ClientActuel { get => clientActuel; set => clientActuel = value; }
+        internal CompteAdmin CompteAdmin { get => compteAdmin; set => compteAdmin = value; }
 
         public void ouvrirguichet(double Soldeguichet)
         {
@@ -43,93 +42,173 @@ namespace Guichet
             else
             {
                 Panne = false;
-                menuprincipale();
+                menuprincipal();
             }
         }
+
         public void modepanne(bool Panne)
         {
             if (Panne == true)
             {
-                Console.WriteLine("Le système ne peut pas se connecter à votre compte. Veuillez demander un administrateur.");
+                Console.WriteLine("Le système ne peut pas se connecter à votre compte. Veuillez demander le administrateur.");
             }
         }
-        public void menuprincipale()
+
+        public void menuprincipal()
         {
             Console.WriteLine();
             Console.WriteLine("Veuillez choisir l'une des actions suivantes:");
             Console.WriteLine("1- Se connecter à vore compte");
-            Console.WriteLine("2- Se connecter comme adimnistrateur");
+            Console.WriteLine("2- Se connecter comme administrateur");
             Console.WriteLine("3- Quitter");
-            choisirMenuppl();
+            string input=Console.ReadLine();
+            choisimenuprin(input);
         }
-        public void choisirMenuppl()
+        
+        public void choisimenuprin(string menuchoice)
         {
-            string menuchoice="";
             switch (menuchoice)
             {
                 case "1":
-                    //accesComptClient();
+                    seconnecterclient();
                     break;
 
-                case "2":
-                    //admin.accesComptAdmin();
+                case"2":
+                    //seconnecteradmin()
                     break;
 
-                case "3":
+                case"3":
                     System.Environment.Exit(0);
                     break;
-
+                
                 default:
-                    menuprincipale();
+                    menuprincipal();
                     break;
+            }
+        }
+
+        public void seconnecterclient()
+        {
+            bool T1 = validerNomNip();
+            
+            if (T1 == false)
+            {
+                affichererreur();
+            }
+            else
+            {
+                menuUsager();
+                string input=Console.ReadLine();
+                faireChoix(input);
             }
         }
         
-        public virtual void verificationAcces()
+        public bool validerNomNip()
         {
-            
+            bool rightNomNip = false;
+            int j = 0;
+
+            while(rightNomNip == false && j < 3)
+            {
+                Console.WriteLine("Veuillez saisir votre nom en 8 caractères:");
+                string nomclient = Console.ReadLine();
+                Console.WriteLine("Veuillez saisir votre mon de passe en 4 caractère");
+                string nipclient = Console.ReadLine();
+
+                for (int i = 0; i < Listcompte.Count; i++)
+                {
+                    if (nomclient.Equals(Listcompte[i].Nom) && nipclient.Equals(Listcompte[i].Nip))
+                    {
+                        rightNomNip = true;
+                        ClientActuel = listcompte[i];  //Pour utiliser le nom et nip du client actuel 
+                        break;
+                    }
+                }
+                j++;
+            }
+
+            return rightNomNip;
         }
 
-        public virtual void remplirlistCompte()
+        public bool validerNip()
         {
-            
-            ch1.Nom = ep1.Nom = "Fatemeh1";
-            ch2.Nom = ep2.Nom ="Xin_WAng";
-            ch3.Nom = ep3.Nom = "Marcelle";
-            ch4.Nom = ep4.Nom = "PierreLi";
-            ch5.Nom = ep5.Nom = "PatrickR";
-            ch1.Nip = ep1.Nip = "1234";
-            ch2.Nip = ep2.Nip = "1998";
-            ch3.Nip = ep3.Nip = "9874";
-            ch4.Nip = ep4.Nip = "6541";
-            ch5.Nip = ep5.Nip = "9856";
-            listCompte.Add(ch1);
-            listCompte.Add(ch2);
-            listCompte.Add(ch3);
-            listCompte.Add(ch4);
-            listCompte.Add(ch5);
-            listCompte.Add(ep1);
-            listCompte.Add(ep2);
-            listCompte.Add(ep3);
-            listCompte.Add(ep4);
-            listCompte.Add(ep5);
+            bool rightNip = false;
+            int j = 0;
 
-            Console.WriteLine("Utilisateur"+"\t"+"NIP"+"\t"+"Chèque"+"\t"+"Solde"+"\t"+"Epargne"+"\t"+"Solde"+"\t"+"Etat du compte");
-            foreach (CompteClient item in listCompte)
+            while (rightNip == false && j < 3)
             {
-                if (item is CompteCheque)
+                Console.WriteLine("Veuillez saisir votre mot de passe en 4 caractères");
+                string nipclient = Console.ReadLine();
+
+                for (int i = 0; i < Listcompte.Count; i++)
                 {
-                    Console.Write(item.Nom + "\t" + item.Nip + "\t" + item.Numerocompte);
+                    if (nipclient.Equals(Listcompte[i].Nip))
+                    {
+                        rightNip = true;
+                        break;
+                    }
                 }
-                if (item is CompteEpargne)
-                {
-                    Console.Write(item.Numerocompte);
-                }
-                Console.WriteLine();
+                j++;
+            }
+
+            return rightNip;
+        }
+
+        public void affichererreur()
+        {
+            Console.WriteLine("Une des valeurs n'est pas valide");
+        }
+        
+        public void menuUsager()
+        {
+            Console.WriteLine();
+            Console.WriteLine("1- Changer le mot de passe");
+            Console.WriteLine("2- Déposer un montant dans un compte");
+            Console.WriteLine("3- Retirer un montant d'un compte");
+            Console.WriteLine("4- Afficher le solde du compte chèque ou épargne");
+            Console.WriteLine("5- Effecter un virement entre les comptes");
+            Console.WriteLine("6- Payer une facture");
+            Console.WriteLine("7- Fermer session");
+        }
+
+        public void faireChoix(string input)
+        {
+            switch (input)
+            {
+                case "1":
+                    changenip();
+                    break;
+
+                case "2":
+                    break;
+
+                case "3":
+                    break;
+
+                case "4":
+                    break;
+
+                case "5":
+                    virement();
+                    break;
+
+                case "6":
+                    break;
+
+                case "7":
+                    fermersession();
+                    break;
+
+                default:
+                    break;
             }
         }
-        public string changenip(string nip)
+
+        public void changenip()
         {
+            Console.WriteLine("Enterez votre mot de passe actuel:");
+            string nipclient = Console.ReadLine();
+
             string newnip = "";
 
             while (!(newnip.Length == 4))
@@ -138,7 +217,7 @@ namespace Guichet
                 newnip = Console.ReadLine();
             }
 
-            while (newnip.Equals(nip))
+            while (newnip.Equals(nipclient))
             {
                 Console.WriteLine("Votre mot de passe doit être différent du mont de passe actuel");
                 newnip = Console.ReadLine();
@@ -146,12 +225,60 @@ namespace Guichet
 
             string newnip2 = "";
 
-            while (newnip != newnip2)
+            while(newnip != newnip2)
             {
                 Console.WriteLine("Veuillez confirmer le nouveau mot de passe:");
                 newnip2 = Console.ReadLine();
             }
-            return newnip;
+
+            for (int i = 0; i < Listcompte.Count; i++)
+            {
+                if (nipclient.Equals(Listcompte[i].Nip) && ClientActuel.Nom.Equals(Listcompte[i].Nom))
+                {
+                    Listcompte[i].Nip = newnip;
+
+                    //Console.WriteLine($"Nouveau mot de passe: {Listcompte[i].Nip}");
+                    //Console.WriteLine($"Nom du client: {Listcompte[i].Nom}");
+                    //Console.WriteLine($"Nouveau mot de passe: {Listcompte[i - 1].Nip}");
+                    //Console.WriteLine($"Nom du client: {Listcompte[i - 1].Nom}");
+                }
+            }
+
         }
-    }    
+
+        public void virement()
+        {
+            
+            //Console.WriteLine("");
+        }
+        
+        public void fermersession()
+        {
+            ClientActuel = null;
+            menuprincipal();
+        }
+
+        public void seconnecteradmin()
+        {
+
+        }
+        public void validerAdmin()
+        {
+            string nom = "";
+            string nip = "";
+
+
+            while (!(nom.Equals(CompteAdmin.Nom)) && nip.Equals(CompteAdmin
+                
+                
+                .Nip))
+            {
+                Console.WriteLine("Veuillez saisir votre nom:");
+                nom = Console.ReadLine();
+                Console.WriteLine("Veuillez saisir le mot de passe:");
+                nip = Console.ReadLine();
+            }
+        }
+    }   
+    
 }
