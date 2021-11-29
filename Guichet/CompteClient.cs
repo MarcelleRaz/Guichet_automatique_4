@@ -7,9 +7,41 @@ namespace Guichet
     abstract class CompteClient
     {
         protected string numerocompte;
-        public CompteClient()
+        public double sold;
+        public string propriétair;
+        
+
+    public CompteClient()
         {
            
+
+
         }
+         public abstract void afficherleSold();
+
+
+
+
+
+
+
+
+
+
+     
+
+       
+        
+       
+     
+
+
+
+
+
+
+        
+
+       
     }
 }
