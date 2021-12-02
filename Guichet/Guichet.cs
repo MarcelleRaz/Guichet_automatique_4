@@ -18,8 +18,6 @@ namespace Guichet
         public Guichet()
         {
             this.Soldeguichet = Soldeguichet;
-            
-            
         }
 
         internal Guichet(List<CompteClient> listcompte, CompteAdmin compteAdmin)
@@ -55,17 +53,16 @@ namespace Guichet
         {
             if (Panne == true)
             {
-                Console.WriteLine("Le système ne peut pas se connecter à votre compte. Veuillez demander le administrateur.");
+                Console.WriteLine("Le système ne peut pas se connecter à votre compte. Veuillez demander le administrateur.\n");
             }
         }
 
         public void menuPrincipal()
         {
-            Console.WriteLine();
-            Console.WriteLine("Veuillez choisir l'une des actions suivantes:");
+            Console.WriteLine("\nVeuillez choisir l'une des actions suivantes:");
             Console.WriteLine("1- Se connecter à vore compte");
             Console.WriteLine("2- Se connecter comme administrateur");
-            Console.WriteLine("3- Quitter");
+            Console.WriteLine("3- Quitter\n");
 
             string input = Console.ReadLine();
             choisiMenuPrin(input);
@@ -98,17 +95,13 @@ namespace Guichet
         {
             if (validerNomNip() == false)
             {
-                ChequeActuel.Blocked = true;
-                EpargneActuel.Blocked = true;
-
-                validerBlocked();
-                
+                afficherErreur();
+                fermerSession();
+                menuPrincipal();
             }
             else
             {
                 menuUsager();
-                string input = Console.ReadLine();
-                faireChoix(input);
             }
         }
 
@@ -117,44 +110,40 @@ namespace Guichet
             bool rightNomNip = false;
             Console.WriteLine("Veuillez saisir votre nom en 8 caractères:");
             string nomclient = Console.ReadLine();
-            Console.WriteLine("Veuillez saisir votre mon de passe en 4 caractère");
+            Console.WriteLine("Veuillez saisir votre mon de passe en 4 caractères:");
             string nipclient = Console.ReadLine();
             int j = 0;
 
-            //while (rightNomNip == true && j < 2)
-            //{
-            foreach (CompteClient compteClient in Listcompte)
+            while (j < 2)
             {
-                if (j == 2)
+                foreach (CompteClient compteClient in Listcompte)
                 {
-                    rightNomNip = false;
+                    if (nomclient.Equals(compteClient.Nom) && nipclient.Equals(compteClient.Nip))
+                    {
+                        if (compteClient is CompteCheque)
+                        {
+                            ChequeActuel = compteClient as CompteCheque;
+                        }
+                        else if (compteClient is CompteEpargne)
+                        {
+                            EpargneActuel = compteClient as CompteEpargne;
+                        }
+                    }
                 }
-                if (nomclient.Equals(compteClient.Nom) && nipclient.Equals(compteClient.Nip))
-                {
-                    if (compteClient is CompteCheque)
-                    {
-                        ChequeActuel = compteClient as CompteCheque;
-                    }
-                    else if (compteClient is CompteEpargne)
-                    {
-                        EpargneActuel = compteClient as CompteEpargne;
-                    }
 
+                if (ChequeActuel != null && EpargneActuel != null)
+                {
                     rightNomNip = true;
                     break;
                 }
-                //return rightNomNip;
-                if (j<2 && (!nomclient.Equals(compteClient.Nom) || !nipclient.Equals(compteClient.Nip)))
-                {
-                    afficherErreur();
-                    Console.WriteLine("Veuillez saisir votre nom en 8 caractères:");
-                    nomclient = Console.ReadLine();
-                    Console.WriteLine("Veuillez saisir votre mon de passe en 4 caractère");
-                    nipclient = Console.ReadLine();
-                }
+
                 j++;
+                Console.WriteLine("\nUne des valeurs n'est pas valide.");
+                Console.WriteLine("\nVeuillez saisir votre nom en 8 caractères:");
+                nomclient = Console.ReadLine();
+                Console.WriteLine("Veuillez saisir votre mon de passe en 4 caractère:");
+                nipclient = Console.ReadLine();
             }
-            //}
             return rightNomNip;
         }
 
@@ -162,10 +151,9 @@ namespace Guichet
         {
             bool rightNip = false;
             int j = 0;
-
-            while (rightNip == false && j < 3)
+            while (j < 3)
             {
-                Console.WriteLine("Veuillez saisir votre mot de passe en 4 caractères");
+                Console.WriteLine("\nVeuillez saisir votre mot de passe en 4 caractères:\n");
                 string nipclient = Console.ReadLine();
 
                 foreach (CompteClient compteClient in Listcompte)
@@ -173,30 +161,31 @@ namespace Guichet
                     if (nipclient.Equals(compteClient.Nip))
                     {
                         rightNip = true;
-                        break;
                     }
                 }
+
+                if (rightNip == true)
+                {
+                    break;
+                }
+
                 j++;
             }
-
             return rightNip;
-        }
-
-        public void afficherErreur()
-        {
-            Console.WriteLine("Une des valeurs n'est pas valide");
         }
 
         public void menuUsager()
         {
-            Console.WriteLine();
-            Console.WriteLine("1- Changer le mot de passe");
+            Console.WriteLine("\n1- Changer le mot de passe");
             Console.WriteLine("2- Déposer un montant dans un compte");
             Console.WriteLine("3- Retirer un montant d'un compte");
             Console.WriteLine("4- Afficher le solde du compte chèque ou épargne");
             Console.WriteLine("5- Effecter un virement entre les comptes");
             Console.WriteLine("6- Payer une facture");
-            Console.WriteLine("7- Fermer session");
+            Console.WriteLine("7- Fermer session\n");
+
+            string input = Console.ReadLine();
+            faireChoix(input);
         }
 
         public void faireChoix(string input)
@@ -205,6 +194,7 @@ namespace Guichet
             {
                 case "1":
                     changeNip();
+                    menuUsager();
                     break;
 
                 case "2":
@@ -229,44 +219,48 @@ namespace Guichet
                     break;
 
                 default:
+                    menuPrincipal();
                     break;
             }
         }
 
+
         //No. 1 du meun usager: Changer le mot de passe
         public void changeNip()
         {
-            Console.WriteLine("Veuillez sairsir votre mot de passe actuel:");
-            string nipclient = Console.ReadLine();
+            string nipclient = "";
+            while (ChequeActuel.Nip != nipclient && EpargneActuel.Nip != nipclient)
+            {
+                Console.WriteLine("\nVeuillez sairsir votre mot de passe actuel:");
+                nipclient = Console.ReadLine();
+            }
 
             string newnip = "";
-
             while (newnip.Length != 4)
             {
-                Console.WriteLine("Veuillez saisir votre nouveau mot de passe (4 charactor): ");
+                Console.WriteLine("\nVeuillez saisir votre nouveau mot de passe (4 charactor): ");
                 newnip = Console.ReadLine();
             }
 
             while (newnip.Equals(nipclient))
             {
-                Console.WriteLine("Votre mot de passe doit être différent du mont de passe actuel");
+                Console.WriteLine("\nVotre mot de passe doit être différent du mont de passe actuel.");
                 newnip = Console.ReadLine();
             }
 
             string newnip2 = "";
-
             while (newnip != newnip2)
             {
-                Console.WriteLine("Veuillez confirmer le nouveau mot de passe:");
+                Console.WriteLine("\nVeuillez confirmer le nouveau mot de passe:");
                 newnip2 = Console.ReadLine();
             }
 
             ChequeActuel.Nip = newnip2;
             EpargneActuel.Nip = newnip2;
 
-            Console.WriteLine($"Nouveau mot de passe:{newnip2}");
-
         }
+
+
         // No.4 du menu usage: Afficher le solde du compte cheque ou du compte epargne
         public void soldeCompte()
         {
@@ -279,12 +273,12 @@ namespace Guichet
                 if (a == "1")
                 {
                     string t1 = Convert.ToDouble(ChequeActuel.Soldecompte).ToString("0 000.00");
-                    Console.WriteLine($"Le montant du compte cheque est: {t1}");
+                    Console.WriteLine($"Le montant du compte cheque est: {t1}\n");
                 }
                 else if(a == "2")
                 {
                     string t2 = Convert.ToDouble(EpargneActuel.Soldecompte).ToString("0 000.00");
-                    Console.WriteLine($"Le montant du compte épargne est: {t2}");
+                    Console.WriteLine($"Le montant du compte épargne est: {t2}\n");
                 }
                 menuUsager();
             }
@@ -292,22 +286,19 @@ namespace Guichet
         }
         public void afficherMenuSolde()
         {
-            Console.WriteLine();
-            Console.WriteLine("1- Solde du compte chèque");
-            Console.WriteLine("2- Solde du compte épargne");
+            Console.WriteLine("\n1- Solde du compte chèque");
+            Console.WriteLine("2- Solde du compte épargne\n");
         }
 
         // No.5 du menu usage: Effectuer un virement entre les comptes
         public void virement()
         {
             string c = "";
-
             while (!(c == "1" || c == "2"))
             {
-                Console.WriteLine();
-                Console.WriteLine("Veuillez choisir: ");
+                Console.WriteLine("\nVeuillez choisir: ");
                 Console.WriteLine("1. Du compte cheque à compte épagne");
-                Console.WriteLine("2. Du compte épagne à compte cheque");
+                Console.WriteLine("2. Du compte épagne à compte cheque\n");
                 c = Console.ReadLine();
             }
 
@@ -324,9 +315,8 @@ namespace Guichet
                     break;
 
                 default:
-
+                    menuUsager();
                     break;
-
             }
 
         }
@@ -339,44 +329,43 @@ namespace Guichet
 
             while (t == false)
             {
-                Console.WriteLine("Veuillez saisir le montant:");
+                Console.WriteLine("\nVeuillez saisir le montant:");
                 montant = Console.ReadLine();
                 t = Double.TryParse(montant, out corretmontant);
                 corretmontant = Math.Round(corretmontant, 2);
 
                 if (corretmontant < 0)
                 {
-                    t = false;
+                    Console.WriteLine("\nVeuillez entre le montant valide.");
                     continue;
                 }
-                else if (corretmontant > 10000)
+                else if (corretmontant > 1000)
                 {
-                     
                     if (validerNip() == false)
                     {
-                        ChequeActuel.Blocked = true;
-                        EpargneActuel.Blocked = true;
+                        afficherErreur();
+                        fermerSession();
+                        break;
                     }
-                    return corretmontant;
-                   
                 }
-
+                t = true;
             }
-
             return corretmontant;
         }
+        public void validerSoldeCompte()
+        {
 
+        }
 
         public void virementAtoB(bool AtoB)
         {
             double montant = validationMontant();
             string t = Convert.ToDouble(montant).ToString(" 000.00");
-            Console.WriteLine($"Le montant du compte cheque à compte épagne est: {t}");
+            Console.WriteLine($"Le montant du compte cheque à compte épagne est: {t}\n");
             if (AtoB == true)
             {
                 ChequeActuel.Soldecompte = ChequeActuel.Soldecompte - montant;
                 EpargneActuel.Soldecompte = EpargneActuel.Soldecompte + montant;
-                Console.WriteLine("");
             }
             else
             {
@@ -394,16 +383,11 @@ namespace Guichet
             menuPrincipal();
         }
 
-        public bool validerBlocked()
+        public void afficherErreur()
         {
-            bool t = false;
-            if (ChequeActuel.Blocked == true || EpargneActuel.Blocked == true)
-            {
-                Console.WriteLine("Votre compte est vérouillé");
-                t = true;
-            }
-            return t;
+            Console.WriteLine("\nVotre compte est vérouillé\n");
         }
+
 
         // No.2 du menu principal
         public void seconnecterAdmin()
@@ -417,7 +401,7 @@ namespace Guichet
 
             while (!(nom.Equals(CompteAdmin.Nom)) && nip.Equals(CompteAdmin.Nip))
             {
-                Console.WriteLine("Veuillez saisir votre nom:");
+                Console.WriteLine("\nVeuillez saisir votre nom:");
                 nom = Console.ReadLine();
                 Console.WriteLine("Veuillez saisir le mot de passe:");
                 nip = Console.ReadLine();
