@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Guichet
-{    
-    class CompteCheque : CompteClient
+{
+    public class CompteCheque : CompteClient
     {
-        public CompteCheque(string numero)
+        private double solde;
+        public CompteCheque(string numero, double solde)
         {
             this.numerocompte = numero;
+            this.solde = solde;
         }
+
+        public double Solde { get => solde; set => solde = value; }
     }
 }
