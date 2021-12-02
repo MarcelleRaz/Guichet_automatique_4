@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Globalization;
+
 
 namespace Guichet
 {
@@ -54,11 +56,14 @@ namespace Guichet
             if (Panne == true)
             {
                 Console.WriteLine("Le système ne peut pas se connecter à votre compte. Veuillez demander le administrateur.\n");
+                
             }
         }
 
         public void menuPrincipal()
         {
+           
+
             Console.WriteLine("\nVeuillez choisir l'une des actions suivantes:");
             Console.WriteLine("1- Se connecter à vore compte");
             Console.WriteLine("2- Se connecter comme administrateur");
@@ -205,6 +210,7 @@ namespace Guichet
 
                 case "4":
                     soldeCompte();
+                    menuUsager();
                     break;
 
                 case "5":
@@ -219,7 +225,7 @@ namespace Guichet
                     break;
 
                 default:
-                    menuPrincipal();
+                    menuUsager();
                     break;
             }
         }
@@ -264,23 +270,24 @@ namespace Guichet
         // No.4 du menu usage: Afficher le solde du compte cheque ou du compte epargne
         public void soldeCompte()
         {
-            string a = "";
-            while(!(a =="1" || a == "2"))
+            string choix = "";
+            while(!(choix=="1" || choix== "2"))
             {
                 afficherMenuSolde();
-                a = Console.ReadLine();
+                choix= Console.ReadLine();
 
-                if (a == "1")
+                if (choix== "1")
                 {
-                    string t1 = Convert.ToDouble(ChequeActuel.Soldecompte).ToString("0 000.00");
+                    string t1 = ChequeActuel.Soldecompte.ToString("C", CultureInfo.CurrentCulture);
                     Console.WriteLine($"Le montant du compte cheque est: {t1}\n");
                 }
-                else if(a == "2")
+                else if(choix== "2")
                 {
-                    string t2 = Convert.ToDouble(EpargneActuel.Soldecompte).ToString("0 000.00");
+                    string t2 = EpargneActuel.Soldecompte.ToString("C", CultureInfo.CurrentCulture);
                     Console.WriteLine($"Le montant du compte épargne est: {t2}\n");
                 }
-                menuUsager();
+                
+                break;
             }
 
         }
@@ -307,11 +314,13 @@ namespace Guichet
                 case "1":
                     bool AtoB1 = true;
                     virementAtoB(AtoB1);
+                    menuUsager();
                     break;
 
                 case "2":
                     bool AtoB2 = false;
                     virementAtoB(AtoB2);
+                    menuUsager();
                     break;
 
                 default:
@@ -331,15 +340,25 @@ namespace Guichet
             {
                 Console.WriteLine("\nVeuillez saisir le montant:");
                 montant = Console.ReadLine();
-                t = Double.TryParse(montant, out corretmontant);
+                bool truenumber = Double.TryParse(montant, out corretmontant);
                 corretmontant = Math.Round(corretmontant, 2);
 
-                if (corretmontant < 0)
+                if (truenumber == false)
                 {
-                    Console.WriteLine("\nVeuillez entre le montant valide.");
                     continue;
                 }
-                else if (corretmontant > 1000)
+
+                else if (corretmontant < 0)
+                {
+                    Console.WriteLine("\nVeuillez entre le montant valide.");
+                }
+
+                else if(corretmontant>=0 && corretmontant <= 1000)
+                {
+                   t = true;
+                }
+
+                else if(corretmontant > 1000)
                 {
                     if (validerNip() == false)
                     {
@@ -348,31 +367,73 @@ namespace Guichet
                         break;
                     }
                 }
-                t = true;
+
             }
             return corretmontant;
         }
-        public void validerSoldeCompte()
-        {
 
+        public bool montantEtSoldeGuichet(double montant)
+        {
+            bool T = true;
+            if (montant > Soldeguichet)
+            {
+                T = false;
+                modepanne(T);
+            }
+            return T;
+        }
+
+        public bool validerSoldeCompteCheque(double montant)
+        {
+            bool T = true;
+            while(montant > ChequeActuel.Soldecompte)
+            {
+                Console.WriteLine("Le solde compte n'est pas sufffisant.");
+                montant=validationMontant();
+                T = false;
+            }
+            return T;
+        }
+
+        public bool validerSoldeCompteEpargne(double montant)
+        {
+            bool T = true;
+            while (montant > EpargneActuel.Soldecompte)
+            {
+                Console.WriteLine("Le solde compte n'est pas sufffisant.");
+                montant = validationMontant();
+                T = false;
+            }
+            return T;
         }
 
         public void virementAtoB(bool AtoB)
         {
             double montant = validationMontant();
-            string t = Convert.ToDouble(montant).ToString(" 000.00");
-            Console.WriteLine($"Le montant du compte cheque à compte épagne est: {t}\n");
+
             if (AtoB == true)
             {
-                ChequeActuel.Soldecompte = ChequeActuel.Soldecompte - montant;
-                EpargneActuel.Soldecompte = EpargneActuel.Soldecompte + montant;
+                if (validerSoldeCompteCheque(montant) == true)
+                {
+                    string t = montant.ToString("C", CultureInfo.CurrentCulture);
+                    Console.WriteLine($"Le montant du compte chèque à compte épargne est: {t}\n");
+                    ChequeActuel.Soldecompte = ChequeActuel.Soldecompte - montant;
+                    EpargneActuel.Soldecompte = EpargneActuel.Soldecompte + montant;
+
+                }
+                
             }
-            else
+            else if (validerSoldeCompteEpargne(montant)==true)
             {
+                string t = montant.ToString("C", CultureInfo.CurrentCulture);
+                Console.WriteLine($"Le montant du compte Éaprgne à compte chèque est: {t}\n");
                 EpargneActuel.Soldecompte = EpargneActuel.Soldecompte - montant;
                 ChequeActuel.Soldecompte = ChequeActuel.Soldecompte + montant;
             }
 
+            string t1= ChequeActuel.Soldecompte.ToString("C", CultureInfo.CurrentCulture);
+            string t2 = EpargneActuel.Soldecompte.ToString("C", CultureInfo.CurrentCulture);
+            Console.WriteLine($"Le solde de compte cheque: {t1}\nLe solde de compteÉaprgne: {t2} ");
         }
 
         // No.7 du menu usage: Fermer session
