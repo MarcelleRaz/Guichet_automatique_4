@@ -12,6 +12,8 @@ namespace Guichet
         private double soldeguichet;
         private bool panne;
         private static ArrayList listCompte;
+        bool useradmin;
+        bool userclient;
         Administrateur admin = new Administrateur();
         Utilisateur user1 = new Utilisateur("Xin_Wang", "1234", new CompteCheque("ch0001", 10000.00), new CompteEpargne("ep0001",2500.36),true);
         Utilisateur user2 = new Utilisateur("Fatemeh1", "1998", new CompteCheque("ch0002",589.12), new CompteEpargne("ep0002",68452.23),true);
@@ -31,17 +33,21 @@ namespace Guichet
             admin.NomAdmin = "admin";
             admin.NipAdmin = "123456";
             this.panne = false;
+            useradmin = false;
+            userclient = false;
 
         }
 
         public double Soldeguichet { get => soldeguichet; set => soldeguichet = value; }
         public bool Panne { get => panne; set => panne = value; }
         public static ArrayList ListCompte { get => listCompte; set => listCompte = value; }
+        public bool Useradmin { get => useradmin; set => useradmin = value; }
+        public bool Userclient { get => userclient; set => userclient = value; }
 
         public void startMachine()
         {
             bool start = true;
-            while(start == true)
+            while(start == true && useradmin==false && userclient==false)
             {
                 menuprincipale();
             }
@@ -77,16 +83,18 @@ namespace Guichet
             Console.WriteLine("3- Quitter");
             choisirMenuppl();
         }
-        public void choisirMenuppl()
+        public string choisirMenuppl()
         {
             string menuchoice =Console.ReadLine();
             switch (menuchoice)
             {
                 case "1":
+                    userclient = true;
                     accesComptClient();
                     break;
 
                 case "2":
+                    useradmin = true;
                     accesComptAdmin();
                     break;
 
@@ -98,6 +106,7 @@ namespace Guichet
                     menuprincipale();
                     break;
             }
+            return menuchoice;
         }
         //SECTION UTILISATEUR
         public void accesComptClient()
@@ -196,7 +205,7 @@ namespace Guichet
                         menudepot(user);
                         break;
                     case "3":
-                        //menuretrait();
+                        menuretrait(user);
                         break;
                     case "4":
                         menusolde(user);
@@ -231,7 +240,7 @@ namespace Guichet
             string nipclient = "";
             while (user.Nip != nipclient)
             {
-                Console.WriteLine("\nVeuillez sairsir votre mot de passe actuel:");
+                Console.WriteLine("\nVeuillez saisir votre mot de passe actuel:");
                 nipclient = Console.ReadLine();
             }
 
@@ -309,10 +318,10 @@ namespace Guichet
             double solde = user.Chequeactuel.Solde;
             string soldeStr = solde.ToString("C", CultureInfo.CurrentCulture);
             string depotStr = depot.ToString("C", CultureInfo.CurrentCulture);
-            Console.WriteLine("Vous avez déposer {0} dans votre compte épargne", depotStr, "$ .");
+            Console.WriteLine("Vous avez déposé {0} dans votre compte épargne", depotStr, "$ .");
             Console.WriteLine("Votre solde du compte épargne est de {0}", soldeStr, "$ .");
             Console.WriteLine("******************************************************************************************************");
-            MenuUsager(user);
+            //MenuUsager(user);
             return solde;
         }
         public double depotepargne(Utilisateur user)
@@ -329,11 +338,88 @@ namespace Guichet
             double solde = user.Epargneactuel.Solde;
             string soldeStr = solde.ToString("C", CultureInfo.CurrentCulture);
             string depotStr= depot.ToString("C", CultureInfo.CurrentCulture);
-            Console.WriteLine("Vous avez déposer {0} dans votre compte épargne", depotStr,"$ .");
+            Console.WriteLine("Vous avez déposé {0} dans votre compte épargne", depotStr,"$ .");
             Console.WriteLine("Votre solde du compte épargne est de {0}", soldeStr, "$ .");
             Console.WriteLine("******************************************************************************************************");
             MenuUsager(user);
             return solde;
+        }
+        public void menuretrait(Utilisateur user)
+        {
+            Console.WriteLine("Veuillez choisir dans quel compte vous voulez faire le retrait:");
+            Console.WriteLine("1- Compte chèque");
+            Console.WriteLine("2- Compte épargne");
+            Console.WriteLine("Saisir 1 pour le compte chèque et 2 pour le compte épargne.");
+            choixretrait(user);
+        }
+        public void choixretrait(Utilisateur user)
+        {
+            string choice = Console.ReadLine();
+            bool erreur = false;
+            switch (choice)
+            {
+                case "1":
+                    retraitcheque(user);
+                    break;
+                case "2":
+                    retraitepargne(user);
+                    break;
+                default:
+                    erreur = true;
+                    erreurChoixretrait(choice, user, erreur);
+                    break;
+            }
+        }
+        public void erreurChoixretrait(string choice, Utilisateur user, bool erreur)
+        {
+            while (erreur == true)
+            {
+                erreur = false;
+                Console.WriteLine("Veuillez choisir parmi les numéros ci-dessus.");
+            }
+            choixretrait(user);
+        }
+        public double retraitcheque(Utilisateur user)
+        {
+            Console.WriteLine("Veuillez saisir le montant à retirer: \n");
+            string montant = Console.ReadLine();
+            while (!montant.All(char.IsDigit))
+            {
+                Console.WriteLine("Il y a erreur dans le montant entré. Veuillez saisir votre montant.");
+                montant = Console.ReadLine();
+            }
+            double retrait = Convert.ToDouble(montant);
+            user.Chequeactuel.Solde -= retrait;
+            soldeguichet -= retrait;
+            double solde = user.Chequeactuel.Solde;
+            string soldeStr = solde.ToString("C", CultureInfo.CurrentCulture);
+            string retraitStr = retrait.ToString("C", CultureInfo.CurrentCulture);
+            Console.WriteLine("Vous avez retiré {0} dans votre compte épargne", retraitStr, "$ .");
+            Console.WriteLine("Votre solde du compte épargne est de {0}", soldeStr, "$ .");
+            Console.WriteLine("******************************************************************************************************");
+            MenuUsager(user);
+            return retrait;
+        }
+        public double retraitepargne(Utilisateur user)
+        {
+            Console.WriteLine("Veuillez saisir le montant à retirer: \n");
+            string montant = Console.ReadLine();
+            while (!montant.All(char.IsDigit))
+            {
+                Console.WriteLine("Il y a erreur dans le montant entré. Veuillez saisir votre montant.");
+                montant = Console.ReadLine();
+            }
+            double retrait = Convert.ToDouble(montant);
+            user.Epargneactuel.Solde -= retrait;
+            soldeguichet -= retrait;
+            double solde = user.Epargneactuel.Solde;
+            string soldeStr = solde.ToString("C", CultureInfo.CurrentCulture);
+            string retraitStr = retrait.ToString("C", CultureInfo.CurrentCulture);
+            Console.WriteLine("Vous avez déposer {0} dans votre compte épargne", retraitStr, "$ .");
+            Console.WriteLine("Votre solde du compte épargne est de {0}", soldeStr, "$ .");
+            Console.WriteLine("******************************************************************************************************");
+            MenuUsager(user);
+            return retrait;
         }
         public void menusolde(Utilisateur user)
         {
@@ -378,12 +464,14 @@ namespace Guichet
             string t1 = user.Chequeactuel.Solde.ToString("C", CultureInfo.CurrentCulture);
             Console.WriteLine($"Le montant du compte cheque est: {t1}");
             Console.ReadKey();
+            MenuUsager(user);
         }
         public void soldeEpargne(Utilisateur user)
         {
-            string t2 = user.Chequeactuel.Solde.ToString("C", CultureInfo.CurrentCulture);
+            string t2 = user.Epargneactuel.Solde.ToString("C", CultureInfo.CurrentCulture);
             Console.WriteLine($"Le montant de votre compte épargne est de: {t2}");
             Console.ReadKey();
+            MenuUsager(user);
         }
         public void menuvirement(Utilisateur user)
         {
@@ -427,9 +515,13 @@ namespace Guichet
             double cheque=user.Chequeactuel.Solde - depot;
             string chequeString=cheque.ToString("C", CultureInfo.CurrentCulture);
             double epargne=user.Epargneactuel.Solde + depot;
+            user.Chequeactuel.Solde = cheque;
+            user.Epargneactuel.Solde = epargne;
             string epargneString=epargne.ToString("C", CultureInfo.CurrentCulture);
             Console.WriteLine("Le solde de votre compte chèque est de: {0}",chequeString,"$ ." );
             Console.WriteLine("Le solde de votre compte chèque est de: {0}", epargneString, "$ .");
+            Console.ReadKey();
+            MenuUsager(user);
 
         }
         public void epargneversCheque(Utilisateur user)
@@ -439,9 +531,13 @@ namespace Guichet
             double cheque = user.Chequeactuel.Solde + depot;
             string chequeString = cheque.ToString("C", CultureInfo.CurrentCulture);
             double epargne = user.Epargneactuel.Solde - depot;
+            user.Chequeactuel.Solde = cheque;
+            user.Epargneactuel.Solde = epargne;
             string epargneString = epargne.ToString("C", CultureInfo.CurrentCulture);
             Console.WriteLine("Le solde de votre compte chèque est de: {0}", chequeString, "$ .");
             Console.WriteLine("Le solde de votre compte chèque est de: {0}", epargneString, "$ .");
+            Console.ReadKey();
+            MenuUsager(user);
         }
         
 
@@ -512,8 +608,16 @@ namespace Guichet
             }
             return rightNip;
         }
+        //public void retourmenuclient(Utilisateur user)
+        //{
+        //    while (userclient == true)
+        //    {
+        //        MenuUsager(user);
+        //    }
+        //}
         public void fermerSession()
         {
+            userclient = false;
             menuprincipale();
         }
 
@@ -530,6 +634,13 @@ namespace Guichet
             Console.WriteLine("******************************************************************************************************");
             Console.WriteLine("Veuillez choisir votre action parmi les numéros ci-dessus:\n");
             choiceAdmin();
+        }
+        public void retourmenuadmin()
+        {
+            while (useradmin == true)
+            {
+                menuAdmin();
+            }
         }
         public void choiceAdmin()
         {
@@ -579,7 +690,8 @@ namespace Guichet
         }
         public void soldeGuichet()
         {
-            Console.WriteLine("Le solde du guichet est de: {0}", soldeguichet);
+            string soldeG = soldeguichet.ToString("C", CultureInfo.CurrentCulture);
+            Console.WriteLine("Le solde du guichet est de: {0}", soldeG);
         }
 
         public void remiseFonction()
@@ -660,16 +772,17 @@ namespace Guichet
         
         public void voirlistCompte()
         {
-            Console.WriteLine("Utilisateur" + "\t" + "NIP" + "\t" + "Chèque" + "\t" + "Solde" + "\t" + "\t" + "Epargne" + "\t" + "Solde" + "\t" + "\t" + "Activation");
+            Console.WriteLine("Utilisateur" + "\t" + "NIP" + "\t" + "Chèque" + "\t" + "Solde" + "\t" + "\t" + "Epargne" + "\t" + "Solde" + "\t" + "\t" +  "Activation");
 
             foreach (Utilisateur user in listCompte)
             {
-                Console.WriteLine(user.Nom + "\t" + user.Nip + "\t" + user.Chequeactuel.Numerocompte + "\t" + user.Chequeactuel.Solde + "\t" + "\t" + user.Epargneactuel.Numerocompte + "\t" + user.Epargneactuel.Solde + "\t" + "\t" +user.Activation);
+                Console.WriteLine(user.Nom + "\t" + user.Nip + "\t" + user.Chequeactuel.Numerocompte + "\t" + user.Chequeactuel.Solde + "\t" + "\t" + user.Epargneactuel.Numerocompte + "\t" + user.Epargneactuel.Solde + "\t" + "\t" + user.Activation);
             }
         }
         
         public void retourMenuppl()
         {
+            useradmin = false;
             menuprincipale();
         }
 
