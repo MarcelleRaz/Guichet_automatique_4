@@ -308,7 +308,7 @@ namespace Guichet
         {
             Console.WriteLine("Veuillez saisir le montant à déposer: \n");
             string montant = Console.ReadLine();
-            while (!montant.All(char.IsDigit))
+            while (!montant.All(char.IsDigit)||Convert.ToDouble(montant)<0)
             {
                 Console.WriteLine("Il y a erreur dans le montant entré. Veuillez saisir votre montant.");
                 montant = Console.ReadLine();
@@ -328,7 +328,7 @@ namespace Guichet
         {
             Console.WriteLine("Veuillez saisir le montant à déposer: \n");
             string montant = Console.ReadLine();
-            while (!montant.All(char.IsDigit))
+            while (!montant.All(char.IsDigit) || Convert.ToDouble(montant) < 0)
             {
                 Console.WriteLine("Il y a erreur dans le montant entré. Veuillez saisir votre montant.");
                 montant = Console.ReadLine();
@@ -383,7 +383,7 @@ namespace Guichet
         {
             Console.WriteLine("Veuillez saisir le montant à retirer: \n");
             string montant = Console.ReadLine();
-            while (!montant.All(char.IsDigit))
+            while (!montant.All(char.IsDigit) || Convert.ToDouble(montant) < 0)
             {
                 Console.WriteLine("Il y a erreur dans le montant entré. Veuillez saisir votre montant.");
                 montant = Console.ReadLine();
@@ -404,7 +404,7 @@ namespace Guichet
         {
             Console.WriteLine("Veuillez saisir le montant à retirer: \n");
             string montant = Console.ReadLine();
-            while (!montant.All(char.IsDigit))
+            while (!montant.All(char.IsDigit) || Convert.ToDouble(montant) < 0)
             {
                 Console.WriteLine("Il y a erreur dans le montant entré. Veuillez saisir votre montant.");
                 montant = Console.ReadLine();
