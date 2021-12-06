@@ -13,9 +13,8 @@ namespace Guichet
         private bool panne;
         private static ArrayList listCompte;
         bool useradmin;
-        bool userclient;
         Administrateur admin = new Administrateur();
-        Utilisateur user1 = new Utilisateur("Xin_Wang", "1234", new CompteCheque("ch0001", 10000.00), new CompteEpargne("ep0001",2500.36),true);
+        Utilisateur user1 = new Utilisateur("Xin_Wang", "1234", new CompteCheque("ch0001", 20000.00), new CompteEpargne("ep0001",2500.36),true);
         Utilisateur user2 = new Utilisateur("Fatemeh1", "1998", new CompteCheque("ch0002",589.12), new CompteEpargne("ep0002",68452.23),true);
         Utilisateur user3 = new Utilisateur("Marcelle", "9874", new CompteCheque("ch0003",7896.10), new CompteEpargne("ep0003",745.23),true);
         Utilisateur user4 = new Utilisateur("PierreLi", "6541", new CompteCheque("ch0004",1400.25), new CompteEpargne("ep0004",10000.20),true);
@@ -33,14 +32,12 @@ namespace Guichet
             admin.NipAdmin = "123456";
             this.panne = false;
             useradmin = false;
-            userclient = false;
 
         }
         public double Soldeguichet { get => soldeguichet; set => soldeguichet = value; }
         public bool Panne { get => panne; set => panne = value; }
         public static ArrayList ListCompte { get => listCompte; set => listCompte = value; }
         public bool Useradmin { get => useradmin; set => useradmin = value; }
-        public bool Userclient { get => userclient; set => userclient = value; }
         public void startMachine()
         {
             bool start = true;
@@ -50,29 +47,25 @@ namespace Guichet
             }
         }    
         //SECTION GUICHET
-        public void ouvrirguichet(double Soldeguichet)
+        public void ouvrirguichet()
         {
-            bool Panne;
-            if (Soldeguichet <= 0)
+            bool Panne=false;
+            if (soldeguichet <= 0)
             {
                 Panne = true;
                 modepanne(Panne);
-            }
-            else
-            {
-                Panne = false;
-                menuprincipale();
             }
         }
         public static void modepanne(bool Panne)
         {
             if (Panne == true)
             {
-                Console.WriteLine("Le système ne peut pas se connecter à votre compte. Veuillez demander un administrateur.");
+                Console.WriteLine("Le système est en panne. Veuillez demander un administrateur.");
             }
         }
         public void menuprincipale()
         {
+            ouvrirguichet();
             Console.WriteLine();
             Console.WriteLine("Veuillez choisir l'une des actions suivantes:");
             Console.WriteLine("1- Se connecter à vore compte");
@@ -86,7 +79,6 @@ namespace Guichet
             switch (menuchoice)
             {
                 case "1":
-                    userclient = true;
                     accesComptClient();
                     break;
 
@@ -411,6 +403,38 @@ namespace Guichet
             }
             return retrait;
         }
+        public double fondinsuffisantGuichet(Utilisateur user)
+        {
+            Console.WriteLine("Le fond dans le guichet est insuffisant. Voulez-vous retourner au menu ou changer le montant de la transaction?");
+            Console.WriteLine("1- Retourner au menu utilisateur");
+            Console.WriteLine("2- Changer le montant à transférer");
+            string choice = Console.ReadLine();
+            bool erreur = false;
+            double retrait = 0d;
+            switch (choice)
+            {
+                case "1":
+                    MenuUsager(user);
+                    break;
+                case "2":
+                    retrait = montantretrait(user);
+                    break;
+                default:
+                    erreur = true;
+                    erreurfondretrait(choice, user, erreur);
+                    break;
+            }
+            return retrait;
+        }
+        public void erreurfondguichet(string choice, Utilisateur user, bool erreur)
+        {
+            while (erreur == true)
+            {
+                erreur = false;
+                Console.WriteLine("Veuillez choisir parmi les numéros ci-dessus.");
+            }
+            fondinsuffisantGuichet(user);
+        }
         public void erreurfondretrait(string choice, Utilisateur user, bool erreur)
         {
             while(erreur == true)
@@ -426,6 +450,10 @@ namespace Guichet
             while (user.Chequeactuel.Solde < retrait)
             {
                 retrait = fondinsuffisantretrait(user);
+            }
+            while (retrait > soldeguichet)
+            {
+                retrait = fondinsuffisantGuichet(user);
             }
             user.Chequeactuel.Solde -= retrait;
             soldeguichet -= retrait;
@@ -830,7 +858,6 @@ namespace Guichet
         }
         public void fermerSession()
         {
-            userclient = false;
             menuprincipale();
         }
 
