@@ -47,14 +47,15 @@ namespace Guichet
             }
         }    
         //SECTION GUICHET
-        public void ouvrirguichet()
+        public bool ouvrirguichet()
         {
             bool Panne=false;
             if (soldeguichet <= 0)
             {
-                Panne = true;
+                panne = true;
                 modepanne(Panne);
             }
+            return panne;
         }
         public static void modepanne(bool Panne)
         {
@@ -65,7 +66,6 @@ namespace Guichet
         }
         public void menuprincipale()
         {
-            ouvrirguichet();
             Console.WriteLine();
             Console.WriteLine("Veuillez choisir l'une des actions suivantes:");
             Console.WriteLine("1- Se connecter à vore compte");
@@ -76,25 +76,53 @@ namespace Guichet
         public string choisirMenuppl()
         {
             string menuchoice =Console.ReadLine();
-            switch (menuchoice)
+            panne = ouvrirguichet();
+            if (panne == true)
             {
-                case "1":
-                    accesComptClient();
-                    break;
+                switch (menuchoice)
+                {
+                    case "1":
+                        modepanne(panne);
+                        break;
 
-                case "2":
-                    useradmin = true;
-                    accesComptAdmin();
-                    break;
+                    case "2":
+                        useradmin = true;
+                        accesComptAdmin();
+                        break;
 
-                case "3":
-                    System.Environment.Exit(0);
-                    break;
+                    case "3":
+                        System.Environment.Exit(0);
+                        break;
 
-                default:
-                    menuprincipale();
-                    break;
+                    default:
+                        menuprincipale();
+                        break;
+                }
             }
+            else
+            {
+
+                switch (menuchoice)
+                {
+                    case "1":
+                        accesComptClient();
+                        break;
+
+                    case "2":
+                        useradmin = true;
+                        accesComptAdmin();
+                        break;
+
+                    case "3":
+                        System.Environment.Exit(0);
+                        break;
+
+                    default:
+                        menuprincipale();
+                        break;
+                }
+            }
+            
             return menuchoice;
         }
         //SECTION UTILISATEUR
