@@ -157,8 +157,12 @@ namespace Guichet
                         verification = false;
                         x++;
                     }
+                    if (tempo == null && !user_.Nom.Equals(name) && !user_.Nip.Equals(mdp))
+                    {
+                        verification = false;
+                    }
                 }
-                while (verification == false && x <= 4)
+                while (tempo!=null && verification == false && x <= 4)
                 {
                     verification = true;
                     tempo = null;
@@ -179,6 +183,10 @@ namespace Guichet
                 {
                     user = tempo;
                     MenuUsager();
+                }
+                if (tempo == null && verification == false)
+                {
+                    menuprincipale();
                 }
             }
             return tempo;
