@@ -69,7 +69,7 @@ namespace Guichet
         {
             Console.WriteLine();
             Console.WriteLine("Veuillez choisir l'une des actions suivantes:");
-            Console.WriteLine("1- Se connecter à vore compte");
+            Console.WriteLine("1- Se connecter à votre compte");
             Console.WriteLine("2- Se connecter comme adimnistrateur");
             Console.WriteLine("3- Quitter");
             choisirMenuppl();
@@ -156,12 +156,6 @@ namespace Guichet
                         verification = false;
                         x++;
                     }
-                    if ((tempo == null) && (!user_.Nom.Equals(name) && !user_.Nip.Equals(mdp)))
-                    {
-                        menuprincipale();
-                        break;
-                    }
-
                 }
                 while (verification == false && x <= 3)
                 {
@@ -182,6 +176,10 @@ namespace Guichet
                 if (tempo != null && verification == true)
                 {
                     MenuUsager();
+                }
+                if (tempo == null)
+                {
+                    menuprincipale();
                 }
             }
             user = tempo;
