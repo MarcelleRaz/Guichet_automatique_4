@@ -149,6 +149,7 @@ namespace Guichet
                     if (tempo == null && user_.Nom.Equals(name) && user_.Nip.Equals(mdp))
                     {
                         tempo = user_;
+                        user = tempo;
                     }
                     if ((tempo == null) && (user_.Nom.Equals(name) && !user_.Nip.Equals(mdp)))
                     {
@@ -157,7 +158,7 @@ namespace Guichet
                         x++;
                     }
                 }
-                while (verification == false && x <= 3)
+                while (verification == false && x <= 4)
                 {
                     verification = true;
                     tempo = null;
@@ -170,19 +171,16 @@ namespace Guichet
 
                 if (tempo != null && verification == false && x>3)
                 {
+                    user = tempo;
                     tempo.Activation = false;
                     tempo.modeverrouillage(tempo.Activation);
                 }
                 if (tempo != null && verification == true)
                 {
+                    user = tempo;
                     MenuUsager();
                 }
-                if (tempo == null)
-                {
-                    menuprincipale();
-                }
             }
-            user = tempo;
             return tempo;
         }
         public void gestionverrouillage()
@@ -244,6 +242,7 @@ namespace Guichet
                         erreurChoixuser(choice, erreur);
                         break;
                 }
+                MenuUsager();
             }
         }
         public void erreurChoixuser(string choice, bool erreur)
@@ -257,13 +256,14 @@ namespace Guichet
         }
         public void changeNip()
         {
-            string nipclient = "";
+            Console.WriteLine(user.Nom +" "+ user.Nip);
+            Console.WriteLine("\nVeuillez saisir votre mot de passe actuel:");
+            string nipclient = Console.ReadLine();
             while (user.Nip != nipclient)
             {
                 Console.WriteLine("\nVeuillez saisir votre mot de passe actuel:");
                 nipclient = Console.ReadLine();
             }
-
             string newnip = "";
             while (newnip.Length != 4)
             {
@@ -338,8 +338,8 @@ namespace Guichet
             double solde = user.Chequeactuel.Solde;
             string soldeStr = solde.ToString("C", CultureInfo.CurrentCulture);
             string depotStr = depot.ToString("C", CultureInfo.CurrentCulture);
-            Console.WriteLine("Vous avez déposé {0} dans votre compte épargne", depotStr, "$ .");
-            Console.WriteLine("Votre solde du compte épargne est de {0}", soldeStr, "$ .");
+            Console.WriteLine("Vous avez déposé {0} dans votre compte chèque", depotStr, "$ .");
+            Console.WriteLine("Votre solde du compte chèque est de {0}", soldeStr, "$ .");
             Console.WriteLine("******************************************************************************************************");
             return solde;
         }
