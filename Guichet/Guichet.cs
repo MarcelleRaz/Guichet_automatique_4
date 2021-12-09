@@ -144,19 +144,19 @@ namespace Guichet
             bool verification = true;
             while (tempo == null)
             {
-                foreach (Utilisateur user in listCompte)
+                foreach (Utilisateur user_ in listCompte)
                 {
-                    if (tempo == null && user.Nom.Equals(name) && user.Nip.Equals(mdp))
+                    if (tempo == null && user_.Nom.Equals(name) && user_.Nip.Equals(mdp))
                     {
-                        tempo = user;
+                        tempo = user_;
                     }
-                    if ((tempo == null) && (user.Nom.Equals(name) && !user.Nip.Equals(mdp)))
+                    if ((tempo == null) && (user_.Nom.Equals(name) && !user_.Nip.Equals(mdp)))
                     {
-                        tempo = user;
+                        tempo = user_;
                         verification = false;
                         x++;
                     }
-                    if ((tempo == null) && (!user.Nom.Equals(name) && !user.Nip.Equals(mdp)))
+                    if ((tempo == null) && (!user_.Nom.Equals(name) && !user_.Nip.Equals(mdp)))
                     {
                         menuprincipale();
                         break;
@@ -184,6 +184,7 @@ namespace Guichet
                     MenuUsager();
                 }
             }
+            user = tempo;
             return tempo;
         }
         public void gestionverrouillage()
