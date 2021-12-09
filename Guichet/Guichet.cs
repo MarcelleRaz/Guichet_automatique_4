@@ -12,15 +12,16 @@ namespace Guichet
         private double soldeguichet;
         private bool panne;
         private static ArrayList listCompte;
-        bool useradmin;
         Administrateur admin = new Administrateur();
-        Utilisateur user1 = new Utilisateur("Xin_Wang", "1234", new CompteCheque("ch0001", 20000.00), new CompteEpargne("ep0001",2500.36),true);
-        Utilisateur user2 = new Utilisateur("Fatemeh1", "1998", new CompteCheque("ch0002",589.12), new CompteEpargne("ep0002",68452.23),true);
-        Utilisateur user3 = new Utilisateur("Marcelle", "9874", new CompteCheque("ch0003",7896.10), new CompteEpargne("ep0003",745.23),true);
-        Utilisateur user4 = new Utilisateur("PierreLi", "6541", new CompteCheque("ch0004",1400.25), new CompteEpargne("ep0004",10000.20),true);
-        Utilisateur user5 = new Utilisateur("PatrickR", "9856", new CompteCheque("ch0005",7500.54), new CompteEpargne("ep0005",20000.65),true);
+        private Utilisateur user;
+        
         public Guichet()
         {
+            Utilisateur user1 = new Utilisateur("Xin_Wang", "1234", new CompteCheque("ch0001", 20000.00), new CompteEpargne("ep0001", 2500.36), true);
+            Utilisateur user2 = new Utilisateur("Fatemeh1", "1998", new CompteCheque("ch0002", 589.12), new CompteEpargne("ep0002", 68452.23), true);
+            Utilisateur user3 = new Utilisateur("Marcelle", "9874", new CompteCheque("ch0003", 7896.10), new CompteEpargne("ep0003", 745.23), true);
+            Utilisateur user4 = new Utilisateur("PierreLi", "6541", new CompteCheque("ch0004", 1400.25), new CompteEpargne("ep0004", 10000.20), true);
+            Utilisateur user5 = new Utilisateur("PatrickR", "9856", new CompteCheque("ch0005", 7500.54), new CompteEpargne("ep0005", 20000.65), true);
             this.soldeguichet = 10000d;
             listCompte = new ArrayList();
             listCompte.Add(user1);
@@ -31,13 +32,12 @@ namespace Guichet
             admin.NomAdmin = "admin";
             admin.NipAdmin = "123456";
             this.panne = false;
-            useradmin = false;
-
         }
         public double Soldeguichet { get => soldeguichet; set => soldeguichet = value; }
         public bool Panne { get => panne; set => panne = value; }
         public static ArrayList ListCompte { get => listCompte; set => listCompte = value; }
-        public bool Useradmin { get => useradmin; set => useradmin = value; }
+        public Utilisateur User { get => user; set => user = value; }
+
         public void startMachine()
         {
             bool start = true;
@@ -57,9 +57,10 @@ namespace Guichet
             }
             return panne;
         }
-        public static void modepanne(bool Panne)
+        public void modepanne(bool panneguichet)
         {
-            if (Panne == true)
+            panneguichet = panne;
+            if (panne == true)
             {
                 Console.WriteLine("Le système est en panne. Veuillez demander un administrateur.");
             }
@@ -86,7 +87,6 @@ namespace Guichet
                         break;
 
                     case "2":
-                        useradmin = true;
                         accesComptAdmin();
                         break;
 
@@ -98,6 +98,7 @@ namespace Guichet
                         menuprincipale();
                         break;
                 }
+                MenuUsager();
             }
             else
             {
@@ -109,7 +110,6 @@ namespace Guichet
                         break;
 
                     case "2":
-                        useradmin = true;
                         accesComptAdmin();
                         break;
 
@@ -156,7 +156,12 @@ namespace Guichet
                         verification = false;
                         x++;
                     }
-                    
+                    if ((tempo == null) && (!user.Nom.Equals(name) && !user.Nip.Equals(mdp)))
+                    {
+                        menuprincipale();
+                        break;
+                    }
+
                 }
                 while (verification == false && x <= 3)
                 {
@@ -176,12 +181,12 @@ namespace Guichet
                 }
                 if (tempo != null && verification == true)
                 {
-                    MenuUsager(tempo);
+                    MenuUsager();
                 }
             }
             return tempo;
         }
-        public void gestionverrouillage(Utilisateur user)
+        public void gestionverrouillage()
         {
             while (user != null && user.Activation == false)
             {
@@ -189,7 +194,7 @@ namespace Guichet
                 break;
             }
         }
-        public void MenuUsager(Utilisateur user)
+        public void MenuUsager()
         {
             Console.WriteLine("******************************************************************************************************");
             Console.WriteLine("1-Changer le mot de passe");
@@ -200,58 +205,58 @@ namespace Guichet
             Console.WriteLine("6-Payer une facture");
             Console.WriteLine("7-Fermer la session");
             Console.WriteLine("******************************************************************************************************");
-            choiceUsager(user);
+            choiceUsager();
         }
-        public void choiceUsager(Utilisateur user)
+        public void choiceUsager()
         {
             string choice = Console.ReadLine();
             bool erreur = false;
             if (user != null && user.Activation == false)
             {
-                gestionverrouillage(user);
+                gestionverrouillage();
             }
             else if (user != null && user.Activation == true)
             {
                 switch (choice)
                 {
                     case "1":
-                        changeNip(user);
+                        changeNip();
                         break;
                     case "2":
-                        menudepot(user);
+                        menudepot();
                         break;
                     case "3":
-                        menuretrait(user);
+                        menuretrait();
                         break;
                     case "4":
-                        menusolde(user);
+                        menusolde();
                         break;
                     case "5":
-                        menuvirement(user);
+                        menuvirement();
                         break;
                     case "6":
-                        menupaiement(user);
+                        menupaiement();
                         break;
                     case "7":
                         fermerSession();
                         break;
                     default:
                         erreur = true;
-                        erreurChoixuser(choice, user, erreur);
+                        erreurChoixuser(choice, erreur);
                         break;
                 }
             }
         }
-        public void erreurChoixuser(string choice, Utilisateur user, bool erreur)
+        public void erreurChoixuser(string choice, bool erreur)
         {
             while (erreur == true)
             {
                 erreur = false;
                 Console.WriteLine("Veuillez choisir parmi les numéros ci-dessus.");
             }
-            choiceUsager(user);
+            choiceUsager();
         }
-        public void changeNip(Utilisateur user)
+        public void changeNip()
         {
             string nipclient = "";
             while (user.Nip != nipclient)
@@ -282,15 +287,15 @@ namespace Guichet
 
             user.Nip = newnip2;
         }
-        public void menudepot(Utilisateur user)
+        public void menudepot()
         {
             Console.WriteLine("Veuillez choisir dans quel compte vous voulez faire le dépôt:");
             Console.WriteLine("1- Compte chèque");
             Console.WriteLine("2- Compte épargne");
             Console.WriteLine("Saisir 1 pour le compte chèque et 2 pour le compte épargne.");
-            choixdepot(user);
+            choixdepot();
         }
-        public void choixdepot(Utilisateur user)
+        public void choixdepot()
         {
             string choice = Console.ReadLine();
             bool erreur = false;
@@ -298,29 +303,29 @@ namespace Guichet
             switch (choice)
             {
                 case "1":
-                    depotcheque(user);
+                    depotcheque();
                     compte = user.Chequeactuel;
                     break;
                 case "2":
-                    depotepargne(user);
+                    depotepargne();
                     compte = user.Epargneactuel;
                     break;
                 default:
                     erreur = true;
-                    erreurChoixdepot(choice,user, erreur);
+                    erreurChoixdepot(choice, erreur);
                     break;
             }
         }
-        public void erreurChoixdepot(string choice, Utilisateur user, bool erreur)
+        public void erreurChoixdepot(string choice, bool erreur)
         {
             while (erreur==true)
             {
                 erreur = false;
                 Console.WriteLine("Veuillez choisir parmi les numéros ci-dessus.");
             }
-            choixdepot(user);
+            choixdepot();
         }
-        public double depotcheque(Utilisateur user) 
+        public double depotcheque() 
         {
             Console.WriteLine("Veuillez saisir le montant à déposer: \n");
             string montant = Console.ReadLine();
@@ -337,10 +342,9 @@ namespace Guichet
             Console.WriteLine("Vous avez déposé {0} dans votre compte épargne", depotStr, "$ .");
             Console.WriteLine("Votre solde du compte épargne est de {0}", soldeStr, "$ .");
             Console.WriteLine("******************************************************************************************************");
-            MenuUsager(user);
             return solde;
         }
-        public double depotepargne(Utilisateur user)
+        public double depotepargne()
         {
             Console.WriteLine("Veuillez saisir le montant à déposer: \n");
             string montant = Console.ReadLine();
@@ -357,46 +361,46 @@ namespace Guichet
             Console.WriteLine("Vous avez déposé {0} dans votre compte épargne", depotStr,"$ .");
             Console.WriteLine("Votre solde du compte épargne est de {0}", soldeStr, "$ .");
             Console.WriteLine("******************************************************************************************************");
-            MenuUsager(user);
             return solde;
         }
-        public void menuretrait(Utilisateur user)
+        public void menuretrait()
         {
             Console.WriteLine("Veuillez choisir dans quel compte vous voulez faire le retrait:");
             Console.WriteLine("1- Compte chèque");
             Console.WriteLine("2- Compte épargne");
             Console.WriteLine("Saisir 1 pour le compte chèque et 2 pour le compte épargne.");
-            choixretrait(user);
+            choixretrait();
         }
-        public void choixretrait(Utilisateur user)
+        public void choixretrait()
         {
             string choice = Console.ReadLine();
             bool erreur = false;
             switch (choice)
             {
                 case "1":
-                    retraitcheque(user);
+                    retraitcheque();
                     break;
                 case "2":
-                    retraitepargne(user);
+                    retraitepargne();
                     break;
                 default:
                     erreur = true;
-                    erreurChoixretrait(choice, user, erreur);
+                    erreurChoixretrait(choice,user, erreur);
                     break;
             }
         }
-        public void erreurChoixretrait(string choice, Utilisateur user, bool erreur)
+        public void erreurChoixretrait(string choice, Utilisateur user_, bool erreur)
         {
+            user = user_;
             while (erreur == true)
             {
                 erreur = false;
                 Console.WriteLine("Veuillez choisir parmi les numéros ci-dessus.");
             }
-            choixretrait(user);
+            choixretrait();
         }
        
-        public double montantretrait(Utilisateur user)
+        public double montantretrait()
         {
             Console.WriteLine("Veuillez saisir le montant à retirer: \n");
             string montant = Console.ReadLine();
@@ -408,7 +412,7 @@ namespace Guichet
             double retrait = Convert.ToDouble(montant);
             return retrait;
         }
-        public double fondinsuffisantretrait(Utilisateur user)
+        public double fondinsuffisantretrait()
         {
             Console.WriteLine("Vos fonds sont insuffisants. Voulez-vous retourner au menu ou changer le montant de la transaction?");
             Console.WriteLine("1- Retourner au menu utilisateur");
@@ -419,19 +423,19 @@ namespace Guichet
             switch (choice)
             {
                 case "1":
-                    MenuUsager(user);
+                    MenuUsager();
                     break;
                 case "2":
-                    retrait=montantretrait(user);
+                    retrait=montantretrait();
                     break;
                 default:
                     erreur = true;
-                    erreurfondretrait(choice, user, erreur);
+                    erreurfondretrait(choice,erreur);
                     break;
             }
             return retrait;
         }
-        public double fondinsuffisantGuichet(Utilisateur user)
+        public double fondinsuffisantGuichet()
         {
             Console.WriteLine("Le fond dans le guichet est insuffisant. Voulez-vous retourner au menu ou changer le montant de la transaction?");
             Console.WriteLine("1- Retourner au menu utilisateur");
@@ -442,46 +446,46 @@ namespace Guichet
             switch (choice)
             {
                 case "1":
-                    MenuUsager(user);
+                    MenuUsager();
                     break;
                 case "2":
-                    retrait = montantretrait(user);
+                    retrait = montantretrait();
                     break;
                 default:
                     erreur = true;
-                    erreurfondretrait(choice, user, erreur);
+                    erreurfondretrait(choice, erreur);
                     break;
             }
             return retrait;
         }
-        public void erreurfondguichet(string choice, Utilisateur user, bool erreur)
+        public void erreurfondguichet(string choice, bool erreur)
         {
             while (erreur == true)
             {
                 erreur = false;
                 Console.WriteLine("Veuillez choisir parmi les numéros ci-dessus.");
             }
-            fondinsuffisantGuichet(user);
+            fondinsuffisantGuichet();
         }
-        public void erreurfondretrait(string choice, Utilisateur user, bool erreur)
+        public void erreurfondretrait(string choice, bool erreur)
         {
             while(erreur == true)
             {
                 erreur = false;
                 Console.WriteLine("Veuillez choisir parmi les numéros ci-dessus.");
             }
-            fondinsuffisantretrait(user);
+            fondinsuffisantretrait();
         }
-        public double retraitcheque(Utilisateur user)
+        public double retraitcheque()
         {
-            double retrait = montantretrait(user);
+            double retrait = montantretrait();
             while (user.Chequeactuel.Solde < retrait)
             {
-                retrait = fondinsuffisantretrait(user);
+                retrait = fondinsuffisantretrait();
             }
             while (retrait > soldeguichet)
             {
-                retrait = fondinsuffisantGuichet(user);
+                retrait = fondinsuffisantGuichet();
             }
             user.Chequeactuel.Solde -= retrait;
             soldeguichet -= retrait;
@@ -491,15 +495,14 @@ namespace Guichet
             Console.WriteLine("Vous avez retiré {0} dans votre compte épargne", retraitStr, "$ .");
             Console.WriteLine("Votre solde du compte épargne est de {0}", soldeStr, "$ .");
             Console.WriteLine("******************************************************************************************************");
-            MenuUsager(user);
             return retrait;
         }
-        public double retraitepargne(Utilisateur user)
+        public double retraitepargne()
         {
-            double retrait = montantretrait(user);
+            double retrait = montantretrait();
             while (user.Epargneactuel.Solde < retrait)
             {
-                retrait=fondinsuffisantretrait(user);
+                retrait=fondinsuffisantretrait();
             }
             user.Epargneactuel.Solde -= retrait;
             soldeguichet -= retrait;
@@ -509,18 +512,17 @@ namespace Guichet
             Console.WriteLine("Vous avez retiré {0} dans votre compte épargne", retraitStr, "$ .");
             Console.WriteLine("Votre solde du compte épargne est de {0}", soldeStr, "$ .");
             Console.WriteLine("******************************************************************************************************");
-            MenuUsager(user);
             return retrait;
         }
-        public void menusolde(Utilisateur user)
+        public void menusolde()
         {
             Console.WriteLine("Veuillez choisir dans quel compte vous voulez afficher le solde:");
             Console.WriteLine("1- Compte chèque");
             Console.WriteLine("2- Compte épargne");
             Console.WriteLine("Saisir 1 pour le compte chèque et 2 pour le compte épargne.");
-            choixsolde(user);
+            choixsolde();
         }
-        public void choixsolde(Utilisateur user)
+        public void choixsolde()
         {
             string choice = Console.ReadLine();
             bool erreur = false;
@@ -528,78 +530,76 @@ namespace Guichet
             switch (choice)
             {
                 case "1":
-                    soldeCheque(user);
+                    soldeCheque();
                     compte = user.Chequeactuel;
                     break;
                 case "2":
-                    soldeEpargne(user);
+                    soldeEpargne();
                     compte = user.Epargneactuel;
                     break;
                 default:
                     erreur = true;
-                    erreurChoixsolde(choice, user, erreur);
+                    erreurChoixsolde(choice, erreur);
                     break;
             }
         }
-        public void erreurChoixsolde(string choice, Utilisateur user, bool erreur)
+        public void erreurChoixsolde(string choice, bool erreur)
         {
             while (erreur == true)
             {
                 erreur = false;
                 Console.WriteLine("Veuillez choisir parmi les numéros ci-dessus.");
             }
-            choixsolde(user);
+            choixsolde();
         }
-        public void soldeCheque(Utilisateur user)
+        public void soldeCheque()
         {
             string t1 = user.Chequeactuel.Solde.ToString("C", CultureInfo.CurrentCulture);
             Console.WriteLine($"Le montant du compte chèque est: {t1}");
             Console.ReadKey();
-            MenuUsager(user);
         }
-        public void soldeEpargne(Utilisateur user)
+        public void soldeEpargne()
         {
             string t2 = user.Epargneactuel.Solde.ToString("C", CultureInfo.CurrentCulture);
             Console.WriteLine($"Le montant de votre compte épargne est de: {t2}");
             Console.ReadKey();
-            MenuUsager(user);
         }
-        public void menuvirement(Utilisateur user)
+        public void menuvirement()
         {
             Console.WriteLine("Veuillez choisir votre transfert:");
             Console.WriteLine("1- Du compte chèque à compte épargne");
             Console.WriteLine("2- Du compte épargne à compte chèque");
             Console.WriteLine("Saisir 1 pour le compte chèque et 2 pour le compte épargne.");
-            choixvirement(user);
+            choixvirement();
         }
-        public void choixvirement(Utilisateur user)
+        public void choixvirement()
         {
             string choice = Console.ReadLine();
             bool erreur = false;
             switch (choice)
             {
                 case "1":
-                    chequeversEpargne(user);
+                    chequeversEpargne();
                     break;
                 case "2":
-                    epargneversCheque(user);
+                    epargneversCheque();
                     break;
                 default:
                     erreur = true;
-                    erreurChoixvirement(choice, user, erreur);
+                    erreurChoixvirement(choice, erreur);
                     break;
             }
         }
-        public void erreurChoixvirement(string choice, Utilisateur user, bool erreur)
+        public void erreurChoixvirement(string choice, bool erreur)
         {
             while (erreur == true)
             {
                 erreur = false;
                 Console.WriteLine("Veuillez choisir parmi les numéros ci-dessus.");
             }
-            choixvirement(user);
+            choixvirement();
         }
-        public string fondinsuffisantvirement(Utilisateur user)
+        public string fondinsuffisantvirement()
         {
             Console.WriteLine("Vos fonds sont insuffisants. Voulez-vous retourner au menu ou changer le montant de la transaction?");
             Console.WriteLine("1- Retourner au menu utilisateur");
@@ -610,39 +610,39 @@ namespace Guichet
             switch (choice)
             {
                 case "1":
-                    MenuUsager(user);
+                    MenuUsager();
                     break;
                 case "2":
-                    montant=montantvirement(user);
+                    montant=montantvirement();
                     break;
                 default:
                     erreur = true;
-                    erreurfondvirement(choice, user, erreur);
+                    erreurfondvirement(choice, erreur);
                     break;
             }
            return montant;
         }
-        public void erreurfondvirement(string choice, Utilisateur user, bool erreur)
+        public void erreurfondvirement(string choice, bool erreur)
         {
             while (erreur == true)
             {
                 erreur = false;
                 Console.WriteLine("Veuillez choisir parmi les numéros ci-dessus.");
             }
-            fondinsuffisantvirement(user);
+            fondinsuffisantvirement();
         }
-        public string montantvirement(Utilisateur user)
+        public string montantvirement()
         {
             Console.WriteLine("Veuillez saisir le montant à transférer vers le compte épargne: \n");
             string depot = Console.ReadLine();
             return depot;
         }
-        public void chequeversEpargne(Utilisateur user)
+        public void chequeversEpargne()
         {
-            double depot = validationMontant(user);
+            double depot = validationMontant();
            while (user.Chequeactuel.Solde < depot)
             {
-                fondinsuffisantvirement(user);
+                fondinsuffisantvirement();
             }
             double cheque=user.Chequeactuel.Solde - depot;
             string chequeString=cheque.ToString("C", CultureInfo.CurrentCulture);
@@ -653,16 +653,14 @@ namespace Guichet
             Console.WriteLine("Le solde de votre compte chèque est de: {0}",chequeString,"$ ." );
             Console.WriteLine("Le solde de votre compte épargne est de: {0}", epargneString, "$ .");
             Console.ReadKey();
-            MenuUsager(user);
-
         }
-        public void epargneversCheque(Utilisateur user)
+        public void epargneversCheque()
         {
-            double depot = validationMontant(user);
+            double depot = validationMontant();
             while (user.Epargneactuel.Solde < depot)
             {
-                fondinsuffisantvirement(user);
-                depot = Convert.ToDouble(validationMontant(user));
+                fondinsuffisantvirement();
+                depot = Convert.ToDouble(validationMontant());
             }
             double cheque = user.Chequeactuel.Solde + depot;
             string chequeString = cheque.ToString("C", CultureInfo.CurrentCulture);
@@ -673,11 +671,10 @@ namespace Guichet
             Console.WriteLine("Le solde de votre compte chèque est de: {0}", chequeString, "$ .");
             Console.WriteLine("Le solde de votre compte épargne est de: {0}", epargneString, "$ .");
             Console.ReadKey();
-            MenuUsager(user);
         }
-        public double validationMontant(Utilisateur user)
+        public double validationMontant()
         {
-            string montant = montantvirement(user);
+            string montant = montantvirement();
             double corretmontant = 0;
             bool t = false;
 
@@ -703,7 +700,7 @@ namespace Guichet
 
                 else if (corretmontant > 1000)
                 {
-                    if (validerNip(user) == false)
+                    if (validerNip() == false)
                     {
                         user.Activation = false;
                         user.modeverrouillage(user.Activation);
@@ -718,7 +715,7 @@ namespace Guichet
             }
             return corretmontant;
         }
-        public bool validerNip(Utilisateur user)
+        public bool validerNip()
         {
             bool rightNip = false;
             int j = 1;
@@ -747,7 +744,7 @@ namespace Guichet
              }
             return rightNip;
         }
-        public string choixFournisseur(Utilisateur user)
+        public string choixFournisseur()
         {
             string choix= "";
             double ch = user.Chequeactuel.Solde;
@@ -764,16 +761,16 @@ namespace Guichet
             return choix;
         }
         
-        public void menupaiement(Utilisateur user)
+        public void menupaiement()
         {
             Console.WriteLine("Veuillez choisir le compte pour le paiement:");
             Console.WriteLine("1- Compte épargne");
             Console.WriteLine("2- Compte chèque");
             Console.WriteLine("Saisir 1 pour le compte chèque et 2 pour le compte épargne.");
-            choixpaiement(user);
+            choixpaiement();
         }
         
-        public CompteClient choixpaiement(Utilisateur user)
+        public CompteClient choixpaiement()
         {
             string choice = Console.ReadLine();
             bool erreur = false;
@@ -781,30 +778,30 @@ namespace Guichet
             switch (choice)
             {
                 case "1":
-                    chequeFacture(user);
+                    chequeFacture();
                     compte = user.Chequeactuel;
                     break;
                 case "2":
-                    epargneFacture(user);
+                    epargneFacture();
                     compte = user.Epargneactuel;
                     break;
                 default:
                     erreur = true;
-                    erreurChoixpaiement(choice, user, erreur);
+                    erreurChoixpaiement(choice, erreur);
                     break;
             }
             return compte;
         }
-        public void erreurChoixpaiement(string choice, Utilisateur user, bool erreur)
+        public void erreurChoixpaiement(string choice, bool erreur)
         {
             while (erreur == true)
             {
                 erreur = false;
                 Console.WriteLine("Veuillez choisir parmi les numéros ci-dessus.");
             }
-            choixpaiement(user);
+            choixpaiement();
         }
-        public double choixmontantFacture(Utilisateur user)
+        public double choixmontantFacture()
         {
             Console.WriteLine("Veuillez saisir le montant à payer pour la facture: \n");
             string montant = Console.ReadLine();
@@ -818,7 +815,7 @@ namespace Guichet
             double debit = paiement + frais;
             return debit;
         }
-        public double fondinsuffisantfact(Utilisateur user)
+        public double fondinsuffisantfact()
         {
             Console.WriteLine("Vos fonds sont insuffisants. Voulez-vous retourner au menu ou changer le montant de la transaction?");
             Console.WriteLine("1- Retourner au menu utilisateur");
@@ -829,34 +826,34 @@ namespace Guichet
             switch (choice)
             {
                 case "1":
-                    MenuUsager(user);
+                    MenuUsager();
                     break;
                 case "2":
-                    montant=choixmontantFacture(user);
+                    montant=choixmontantFacture();
                     break;
                 default:
                     erreur = true;
-                    erreurfondinsuffisant(choice, user, erreur);
+                    erreurfondinsuffisant(choice, erreur);
                     break;
             }
             return montant;
         }
-        public void erreurfondinsuffisant(string choice, Utilisateur user, bool erreur)
+        public void erreurfondinsuffisant(string choice, bool erreur)
         {
             while (erreur == true)
             {
                 erreur = false;
                 Console.WriteLine("Veuillez choisir parmi les numéros ci-dessus.");
             }
-            fondinsuffisantfact(user);
+            fondinsuffisantfact();
         }
-        public void chequeFacture(Utilisateur user)
+        public void chequeFacture()
         {
-            string fournisseur = choixFournisseur(user);
-            double debit = choixmontantFacture(user);
+            string fournisseur = choixFournisseur();
+            double debit = choixmontantFacture();
             while (user.Chequeactuel.Solde < debit)
             {
-               debit= fondinsuffisantfact(user);
+               debit= fondinsuffisantfact();
             }
             user.Chequeactuel.Solde=user.Chequeactuel.Solde-debit;
             double cheque =user.Chequeactuel.Solde;
@@ -865,15 +862,14 @@ namespace Guichet
             Console.WriteLine("Votre compte chèque a été débité de: {0} $ pour le paiement de"+ fournisseur +".", debit);
             Console.WriteLine("Le solde de votre compte chèque est de: {0}", chequeString, "$.");
             Console.ReadKey();
-            MenuUsager(user);
         }
-        public void epargneFacture(Utilisateur user)
+        public void epargneFacture()
         {
-            string fournisseur = choixFournisseur(user);
-            double debit = choixmontantFacture(user);
+            string fournisseur = choixFournisseur();
+            double debit = choixmontantFacture();
             while (user.Chequeactuel.Solde < debit)
             {
-                debit=fondinsuffisantfact(user);
+                debit=fondinsuffisantfact();
             }
             user.Epargneactuel.Solde -= debit;
             double epargne = user.Epargneactuel.Solde;
@@ -882,7 +878,6 @@ namespace Guichet
             Console.WriteLine("Votre compte chèque a été débité de: {0} $ pour le paiement de { 1}.", debitStr, fournisseur);
             Console.WriteLine("Le solde de votre compte épargne est de: {0}", epargneString, "$.");
             Console.ReadKey();
-            MenuUsager(user);
         }
         public void fermerSession()
         {
@@ -903,13 +898,13 @@ namespace Guichet
             Console.WriteLine("Veuillez choisir votre action parmi les numéros ci-dessus:\n");
             choiceAdmin();
         }
-        public void retourmenuadmin()
-        {
-            while (useradmin == true)
-            {
-                menuAdmin();
-            }
-        }
+        //public void retourmenuadmin()
+        //{
+        //    while (useradmin == true)
+        //    {
+        //        menuAdmin();
+        //    }
+        //}
         public void choiceAdmin()
         {
             string choice = Console.ReadLine();
@@ -940,6 +935,7 @@ namespace Guichet
                         Console.WriteLine("Veuillez choisir un bon numéro parmi les actions ci-dessus.\n");
                         break;
                 }
+                menuAdmin();
             }
         }
         public double depotGuichet()
@@ -969,6 +965,7 @@ namespace Guichet
 
             if (response.Equals("O"))
             {
+                panne = false;
                 retourMenuppl();
             }
             if (response.Equals("N"))
@@ -995,19 +992,18 @@ namespace Guichet
         public void verificationAccesadm(string namead, string nipad)
         {
             int i = 1;
-            while (i <= 3)
+            while (i <= 4)
             {
-                if (i == 3)
+                if (i == 4)
                 {
                     panne = true;
                     modepanne(panne);
-                    break;
-                }
-                if (namead.Equals("admin") && nipad.Equals("123456"))
+                }else if
+                 (namead.Equals("admin") && nipad.Equals("123456"))
                 {
                     menuAdmin();
+                    break;
                 }
-
                 if (!namead.Equals("admin") || !nipad.Equals("123456"))
                 {
                     Console.WriteLine("La combinaison 'Nom d'utilisateur et NIP' n'est pas reconnue.\nVeuillez saisir votre nom d'utilisateur et nip.");
@@ -1016,7 +1012,7 @@ namespace Guichet
                     Console.WriteLine("Mot de passe:\n");
                     nipad = Console.ReadLine();
                 }
-                i = i + 1;
+                i ++;
             }
         }
         public void gestionPanne()
@@ -1044,11 +1040,11 @@ namespace Guichet
             foreach (Utilisateur user in listCompte)
             {
                 Console.WriteLine(user.Nom + "\t" + user.Nip + "\t" + user.Chequeactuel.Numerocompte + "\t" + user.Chequeactuel.Solde + "\t" + "\t" + user.Epargneactuel.Numerocompte + "\t" + user.Epargneactuel.Solde + "\t" + "\t" + user.Activation);
+            
             }
         }
         public void retourMenuppl()
         {
-            useradmin = false;
             menuprincipale();
         }
 
